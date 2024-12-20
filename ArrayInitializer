@@ -1,0 +1,29 @@
+#include <iostream>
+
+class ArrayInitializer {
+private:
+    int arr[10]; 
+
+public:
+    
+    ArrayInitializer() {
+        for (int i = 0; i < 10; ++i) {
+            arr[i] = 5; 
+        }
+    }
+
+    
+    void displayArray() const {
+        std::cout << "Array elements: ";
+        for (int i = 0; i < 10; ++i) {
+            std::cout << arr[i] << " ";
+        }
+        std::cout << std::endl;
+    }
+};
+
+int main() {
+    ArrayInitializer myArray; 
+    myArray.displayArray();    
+    return 0;
+}
