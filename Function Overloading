@@ -1,0 +1,33 @@
+#include <iostream>
+#include <cmath>
+
+class AreaCalculator {
+public:
+    // Function to calculate the area of a rectangle
+    double area(double length, double width) {
+        return length * width;
+    }
+
+    // Function to calculate the area of a circle
+    double area(double radius) {
+        return M_PI * radius * radius; // M_PI is a constant for π
+    }
+};
+
+int main() {
+    AreaCalculator calculator;
+
+    // Calculate area of a rectangle
+    double length, width;
+    std::cout << "Enter length and width of the rectangle: ";
+    std::cin >> length >> width;
+    std::cout << "Area of the rectangle: " << calculator.area(length, width) << std::endl;
+
+    // Calculate area of a circle
+    double radius;
+    std::cout << "Enter radius of the circle: ";
+    std::cin >> radius;
+    std::cout << "Area of the circle: " << calculator.area(radius) << std::endl;
+
+    return 0;
+}
