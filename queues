@@ -1,0 +1,52 @@
+#include <iostream>
+
+class Node {
+public:
+    int data;
+    Node* next;
+    Node(int value) : data(value), next(nullptr) {}
+};
+
+class Queue {
+private:
+    Node* front;
+    Node* rear;
+
+public:
+    Queue() : front(nullptr), rear(nullptr) {}
+
+    void enqueue(int value) {
+        Node* newNode = new Node(value);
+        if (!rear) front = rear = newNode;
+        else rear->next = newNode, rear = newNode;
+    }
+
+    int dequeue() {
+        if (!front) return -1; 
+        Node* temp = front;
+        int value = front->data;
+        front = front->next;
+        if (!front) rear = nullptr; 
+        delete temp;
+        return value;
+    }
+
+    void display() {
+        for (Node* temp = front; temp; temp = temp->next)
+            std::cout << temp->data << " ";
+        std::cout << (front ? "" : "Queue is empty!") << std::endl;
+    }
+
+    ~Queue() { while (front) dequeue(); }
+};
+
+int main() {
+    Queue q;
+    q.enqueue(10); q.enqueue(20); q.enqueue(30);
+    q.display();
+    std::cout << "Dequeued: " << q.dequeue() << std::endl; q.display();
+    std::cout << "Dequeued: " << q.dequeue() << std::endl; q.display();
+    std::cout << "Dequeued: " << q.dequeue() << std::endl; q.display();
+    std::cout << "Dequeued: " << q.dequeue() << std::endl; 
+    return 0;
+}
