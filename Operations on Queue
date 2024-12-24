@@ -1,0 +1,117 @@
+#include <iostream>
+using namespace std;
+
+class Queue {
+private:
+    int front;
+    int rear;
+    int size;
+    int* arr;
+
+public:
+    Queue(int s) {
+        size = s;
+        front = -1;
+        rear = -1;
+        arr = new int[size];
+    }
+
+    ~Queue() {
+        delete[] arr;
+    }
+
+    bool isEmpty() {
+        return front == -1;
+    }
+
+    bool isFull() {
+        return (rear + 1) % size == front;
+    }
+
+    void enqueue(int value) {
+        if (isFull()) {
+            cout << "Queue is full. Cannot enqueue " << value << ".\n";
+            return;
+        }
+        if (isEmpty()) {
+            front = rear = 0;
+        } else {
+            rear = (rear + 1) % size;
+        }
+        arr[rear] = value;
+        cout << value << " enqueued successfully.\n";
+    }
+
+    void dequeue() {
+        if (isEmpty()) {
+            cout << "Queue is empty. Cannot dequeue.\n";
+            return;
+        }
+        cout << arr[front] << " dequeued successfully.\n";
+        if (front == rear) {
+            front = rear = -1;
+        } else {
+            front = (front + 1) % size;
+        }
+    }
+
+    void display() {
+        if (isEmpty()) {
+            cout << "Queue is empty.\n";
+            return;
+        }
+        cout << "Queue elements: ";
+        for (int i = front; i != rear; i = (i + 1) % size) {
+            cout << arr[i] << " ";
+        }
+        cout << arr[rear] << "\n";
+    }
+};
+
+int main() {
+    int size;
+    cout << "Enter the size of the queue: ";
+    cin >> size;
+
+    Queue q(size);
+
+    int choice, value;
+    do {
+        cout << "\n1. Enqueue\n2. Dequeue\n3. Check if Empty\n4. Check if Full\n5. Display\n6. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter value to enqueue: ";
+            cin >> value;
+            q.enqueue(value);
+            break;
+        case 2:
+            q.dequeue();
+            break;
+        case 3:
+            if (q.isEmpty())
+                cout << "Queue is empty.\n";
+            else
+                cout << "Queue is not empty.\n";
+            break;
+        case 4:
+            if (q.isFull())
+                cout << "Queue is full.\n";
+            else
+                cout << "Queue is not full.\n";
+            break;
+        case 5:
+            q.display();
+            break;
+        case 6:
+            cout << "Exiting program.\n";
+            break;
+        default:
+            cout << "Invalid choice. Try again.\n";
+        }
+    } while (choice != 6);
+
+    return 0;
+}
