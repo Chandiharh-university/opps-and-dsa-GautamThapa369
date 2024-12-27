@@ -1,0 +1,130 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <utility>
+
+using namespace std;
+
+// Edge structure for Kruskal's algorithm
+struct Edge {
+    int src, dest, weight;
+};
+
+// Disjoint Set Union (DSU) or Union-Find structure
+class DisjointSet {
+public:
+    vector<int> parent, rank;
+
+    DisjointSet(int n) {
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (int i = 0; i < n; i++) {
+            parent[i] = i; // Initialize parent to itself
+        }
+    }
+
+    int find(int u) {
+        if (parent[u] != u) {
+            parent[u] = find(parent[u]); // Path compression
+        }
+        return parent[u];
+    }
+
+    void unionSet(int u, int v) {
+        int rootU = find(u);
+        int rootV = find(v);
+        if (rootU != rootV) {
+            // Union by rank
+            if (rank[rootU] < rank[rootV]) {
+                parent[rootU] = rootV;
+            } else if (rank[rootU] > rank[rootV]) {
+                parent[rootV] = rootU;
+            } else {
+                parent[rootV] = rootU;
+                rank[rootU]++;
+            }
+        }
+    }
+};
+
+// Function to implement Kruskal's algorithm
+vector<Edge> kruskal(int n, vector<Edge>& edges) {
+    vector<Edge> result; // To store the resultant MST
+    DisjointSet dsu(n);
+
+    // Sort edges based on their weight
+    sort(edges.begin(), edges.end(), [](Edge a, Edge b) {
+        return a.weight < b.weight;
+    });
+
+    for (const auto& edge : edges) {
+        int u = edge.src;
+        int v = edge.dest;
+
+        // Check if the selected edge forms a cycle
+        if (dsu.find(u) != dsu.find(v)) {
+            result.push_back(edge); // Include this edge in the MST
+            dsu.unionSet(u, v); // Union the sets
+        }
+    }
+
+    return result;
+}
+
+// Function to implement Prim's algorithm
+vector<Edge> prim(int n, vector<vector<pair<int, int>>>& graph) {
+    vector<Edge> result;
+    vector<bool> inMST(n, false);
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq; // Min-heap
+
+    // Start from the first vertex (0)
+    pq.push({0, 0}); // {weight, vertex}
+
+    while (!pq.empty()) {
+        auto [weight, u] = pq.top();
+        pq.pop();
+
+        if (inMST[u]) continue; // Skip if already in MST
+        inMST[u] = true; // Include vertex in MST
+        if (weight != 0) { // Skip the first vertex
+            result.push_back({-1, u, weight}); // Add edge to result (src is -1 for Prim's)
+        }
+
+        // Explore neighbors
+        for (const auto& [v, w] : graph[u]) {
+            if (!inMST[v]) {
+                pq.push({w, v}); // Push edge to the priority queue
+            }
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    int n, m; // Number of vertices and edges
+    cout << "Enter number of vertices and edges: ";
+    cin >> n >> m;
+
+    vector<Edge> edges(m);
+    cout << "Enter edges (src dest weight):" << endl;
+    for (int i = 0; i < m; i++) {
+        cin >> edges[i].src >> edges[i].dest >> edges[i].weight;
+    }
+
+    // Kruskal's Algorithm
+    vector<Edge> mstKruskal = kruskal(n, edges);
+    cout << "Kruskal's MST:" << endl;
+    int totalWeightKruskal = 0;
+    for (const auto& edge : mstKruskal) {
+        cout << edge.src << " -- " << edge.dest << " == " << edge.weight << endl;
+        totalWeightKruskal += edge.weight;
+    }
+    cout << "Total weight of Kruskal's MST: " << totalWeightKruskal << endl;
+
+    // Prim's Algorithm
+    vector<vector<pair<int, int>>> graph(n);
+    for (const auto& edge : edges) {
+        graph[edge.src].emplace_back(edge.dest, edge.weight);
+        graph[edge.dest
