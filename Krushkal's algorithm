@@ -1,0 +1,95 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// Edge structure to represent an edge in the graph
+struct Edge {
+    int src, dest, weight;
+};
+
+// Disjoint Set Union (DSU) or Union-Find structure
+class DisjointSet {
+public:
+    vector<int> parent, rank;
+
+    DisjointSet(int n) {
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (int i = 0; i < n; i++) {
+            parent[i] = i; // Initialize parent to itself
+        }
+    }
+
+    int find(int u) {
+        if (parent[u] != u) {
+            parent[u] = find(parent[u]); // Path compression
+        }
+        return parent[u];
+    }
+
+    void unionSet(int u, int v) {
+        int rootU = find(u);
+        int rootV = find(v);
+        if (rootU != rootV) {
+            // Union by rank
+            if (rank[rootU] < rank[rootV]) {
+                parent[rootU] = rootV;
+            } else if (rank[rootU] > rank[rootV]) {
+                parent[rootV] = rootU;
+            } else {
+                parent[rootV] = rootU;
+                rank[rootU]++;
+            }
+        }
+    }
+};
+
+// Function to implement Kruskal's algorithm
+vector<Edge> kruskal(int n, vector<Edge>& edges) {
+    vector<Edge> result; // To store the resultant MST
+    DisjointSet dsu(n);
+
+    // Sort edges based on their weight
+    sort(edges.begin(), edges.end(), [](Edge a, Edge b) {
+        return a.weight < b.weight;
+    });
+
+    for (const auto& edge : edges) {
+        int u = edge.src;
+        int v = edge.dest;
+
+        // Check if the selected edge forms a cycle
+        if (dsu.find(u) != dsu.find(v)) {
+            result.push_back(edge); // Include this edge in the MST
+            dsu.unionSet(u, v); // Union the sets
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    int n, m; // Number of vertices and edges
+    cout << "Enter number of vertices and edges: ";
+    cin >> n >> m;
+
+    vector<Edge> edges(m);
+    cout << "Enter edges (src dest weight):" << endl;
+    for (int i = 0; i < m; i++) {
+        cin >> edges[i].src >> edges[i].dest >> edges[i].weight;
+    }
+
+    vector<Edge> mst = kruskal(n, edges);
+
+    cout << "Edges in the Minimum Spanning Tree:" << endl;
+    int totalWeight = 0;
+    for (const auto& edge : mst) {
+        cout << edge.src << " -- " << edge.dest << " == " << edge.weight << endl;
+        totalWeight += edge.weight;
+    }
+    cout << "Total weight of MST: " << totalWeight << endl;
+
+    return 0;
+}
