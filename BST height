@@ -1,0 +1,52 @@
+#include <iostream>
+using namespace std;
+
+struct TreeNode {
+    int key;
+    TreeNode* left;
+    TreeNode* right;
+
+    TreeNode(int k) : key(k), left(nullptr), right(nullptr) {}
+};
+
+class BinaryTree {
+public:
+    TreeNode* insert(TreeNode* root, int key) {
+        if (!root)
+            return new TreeNode(key);
+
+        if (key < root->key)
+            root->left = insert(root->left, key);
+        else
+            root->right = insert(root->right, key);
+
+        return root;
+    }
+
+    int height(TreeNode* root) {
+        if (!root)
+            return 0;
+
+        int leftHeight = height(root->left);
+        int rightHeight = height(root->right);
+
+        return 1 + max(leftHeight, rightHeight);
+    }
+};
+
+int main() {
+    BinaryTree tree;
+    TreeNode* root = nullptr;
+
+    root = tree.insert(root, 50);
+    root = tree.insert(root, 30);
+    root = tree.insert(root, 70);
+    root = tree.insert(root, 20);
+    root = tree.insert(root, 40);
+    root = tree.insert(root, 60);
+    root = tree.insert(root, 80);
+
+    cout << "Height of the tree: " << tree.height(root) << endl;
+
+    return 0;
+}
